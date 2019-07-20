@@ -1,4 +1,4 @@
 node_modules/
 out/
-tests/bin
-tests/obj
+tests/mstest/bin
+tests/mstest/obj

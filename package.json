@@ -1,19 +1,19 @@
 {
-  "name": "vscode-example-test-adapter",
-  "displayName": "Example Test Explorer",
-  "description": "Run your Example tests in the Sidebar of Visual Studio Code",
+  "name": "vscode-dotnetcore-test-adapter",
+  "displayName": ".Net Core Test Explorer",
+  "description": "Run your .Net Core tests in the Sidebar of Visual Studio Code",
   "icon": "img/icon.png",
-  "author": "Holger Benl <hbenl@evandor.de>",
-  "publisher": "hbenl",
+  "author": "Branden Vennes <b.n.vennes@gmail.com>",
+  "publisher": "b-vennes",
   "version": "0.0.1",
   "license": "MIT",
-  "homepage": "https://github.com/hbenl/vscode-example-test-adapter",
+  "homepage": "https://github.com/b-vennes/vscode-dotnetcore-test-adapter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hbenl/vscode-example-test-adapter.git"
+    "url": "https://github.com/b-vennes/vscode-dotnetcore-test-adapter.git"
   },
   "bugs": {
-    "url": "https://github.com/hbenl/vscode-example-test-adapter/issues"
+    "url": "https://github.com/b-vennes/vscode-dotnetcore-test-adapter/issues"
   },
   "categories": [
     "Other"
