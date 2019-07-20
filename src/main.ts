@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TestHub, testExplorerExtensionId } from 'vscode-test-adapter-api';
 import { Log, TestAdapterRegistrar } from 'vscode-test-adapter-util';
-import { DotnetcoreAdapter } from './adapter';
+import { DotnetcoreAdapter } from './dotnetcoreAdapter';
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		const testHub = testExplorerExtension.exports;
 
-		// this will register an ExampleTestAdapter for each WorkspaceFolder
+		// this will register an DotnetcoreAdapter for each WorkspaceFolder
 		context.subscriptions.push(new TestAdapterRegistrar(
 			testHub,
 			workspaceFolder => new DotnetcoreAdapter(workspaceFolder, log),

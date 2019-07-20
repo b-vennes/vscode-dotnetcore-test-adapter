@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
-import {loadTestsFromDirectory} from './dotnetWrapper'
+import {loadTestsFromDirectory} from './utilities'
 
 const fakeTestSuite: TestSuiteInfo = {
 	type: 'suite',
