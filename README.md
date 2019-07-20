@@ -1,23 +1,23 @@
-# Example Test Adapter for Visual Studio Code
+# .Net Core Test Adapter for Visual Studio Code
 
-This repository contains an example for implementing a `TestAdapter` extension that works with the
-[Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension.
+This repository is an adapter for the [Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension.
 
-More documentation can be found in the [Test Adapter API repository](https://github.com/hbenl/vscode-test-adapter-api).
+It is a fork off the [Test Adapter API example](https://github.com/hbenl/vscode-test-adapter-api).
 
-## Setup
+## Setup for Building in VS Code
 
 * install the [Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension
-* fork and clone this repository and open it in VS Code
+* clone this repository and open it in VS Code
 * run `npm install`
 * run `npm run watch` or start the watch Task in VS Code
 * start the debugger
 
 You should now see a second VS Code window, the Extension Development Host.
-Open a folder in this window and click the "Test" icon in the Activity bar.
-Now you should see the fake example test suite in the side panel:
+Open your folder containing the .Net project in this window and click the "Test" icon in the Activity bar.
 
-![The fake example test suite](img/fake-tests.png)
+The only implemented functionality at the moment is listing tests.
+
+The below instructions are for my own development use.
 
 ## Basic implementation
 
