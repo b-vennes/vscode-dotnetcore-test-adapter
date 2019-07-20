@@ -17,7 +17,7 @@ Open your folder containing the .Net project in this window and click the "Test"
 
 The only implemented functionality at the moment is listing tests.
 
-The below instructions are for my own development use.
+**The below instructions are for my own development use.**
 
 ## Basic implementation
 
