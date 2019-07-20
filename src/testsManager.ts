@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
+import {loadTestsFromDirectory} from './dotnetWrapper'
 
 const fakeTestSuite: TestSuiteInfo = {
 	type: 'suite',
@@ -36,27 +37,38 @@ const fakeTestSuite: TestSuiteInfo = {
 	]
 };
 
-export function loadFakeTests(): Promise<TestSuiteInfo> {
+export function loadTests(directory: string): Promise<TestSuiteInfo>
+{
+	loadTestsFromDirectory(directory);
 	return Promise.resolve<TestSuiteInfo>(fakeTestSuite);
 }
 
-export async function runFakeTests(
+export async function runTests
+(
 	tests: string[],
 	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>
-): Promise<void> {
-	for (const suiteOrTestId of tests) {
+): Promise<void>
+{
+	for (const suiteOrTestId of tests)
+	{
 		const node = findNode(fakeTestSuite, suiteOrTestId);
-		if (node) {
+		if (node)
+		{
 			await runNode(node, testStatesEmitter);
 		}
 	}
 }
 
-function findNode(searchNode: TestSuiteInfo | TestInfo, id: string): TestSuiteInfo | TestInfo | undefined {
-	if (searchNode.id === id) {
+function findNode(searchNode: TestSuiteInfo | TestInfo, id: string): TestSuiteInfo | TestInfo | undefined
+{
+	if (searchNode.id === id)
+	{
 		return searchNode;
-	} else if (searchNode.type === 'suite') {
-		for (const child of searchNode.children) {
+	}
+	else if (searchNode.type === 'suite')
+	{
+		for (const child of searchNode.children)
+		{
 			const found = findNode(child, id);
 			if (found) return found;
 		}
@@ -64,12 +76,15 @@ function findNode(searchNode: TestSuiteInfo | TestInfo, id: string): TestSuiteIn
 	return undefined;
 }
 
-async function runNode(
+async function runNode
+(
 	node: TestSuiteInfo | TestInfo,
 	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>
-): Promise<void> {
+): Promise<void>
+{
 
-	if (node.type === 'suite') {
+	if (node.type === 'suite')
+	{
 
 		testStatesEmitter.fire(<TestSuiteEvent>{ type: 'suite', suite: node.id, state: 'running' });
 
@@ -79,7 +94,10 @@ async function runNode(
 
 		testStatesEmitter.fire(<TestSuiteEvent>{ type: 'suite', suite: node.id, state: 'completed' });
 
-	} else { // node.type === 'test'
+	}
+	// node.type === 'test'
+	else
+	{
 
 		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'running' });
 
