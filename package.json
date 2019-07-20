@@ -29,9 +29,17 @@
     "watch": "tsc -w",
     "rebuild": "npm run clean && npm run build",
     "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "test": "mocha -r ts-node/register src/**/test.ts"
   },
   "dependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "save": "^2.4.0",
+    "ts-node": "^8.3.0",
     "tslib": "^1.9.3",
     "vscode-test-adapter-api": "^1.7.0",
     "vscode-test-adapter-util": "^0.7.0"

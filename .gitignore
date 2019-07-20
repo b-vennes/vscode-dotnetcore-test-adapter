@@ -1,5 +1,6 @@
 node_modules/
 out/
-tests/*/bin
-tests/*/obj
-tests/*/bin
+example_projects/*/bin
+example_projects/*/obj
+coverage
+.nyc_output
