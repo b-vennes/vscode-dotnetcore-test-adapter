@@ -39,8 +39,7 @@ const fakeTestSuite: TestSuiteInfo = {
 
 export function loadTests(directory: string): Promise<TestSuiteInfo>
 {
-	loadTestsFromDirectory(directory);
-	return Promise.resolve<TestSuiteInfo>(fakeTestSuite);
+	return loadTestsFromDirectory(directory);
 }
 
 export async function runTests
