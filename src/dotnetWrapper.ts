@@ -1,7 +1,7 @@
 import * as childProcess from 'child_process'
 import { TestSuiteInfo, TestInfo } from 'vscode-test-adapter-api';
 
-export function loadTests(directoryPath: string): Promise<TestSuiteInfo>
+export function loadDotnetTests(directoryPath: string): Promise<TestSuiteInfo>
 {
     return new Promise<TestSuiteInfo>((resolve, reject) =>
     {
@@ -16,8 +16,6 @@ export function loadTests(directoryPath: string): Promise<TestSuiteInfo>
                     tests.children.push(test);
                 });
 
-                console.log(tests);
-
                 resolve(tests);
             })
             .catch((error) =>
@@ -27,7 +25,7 @@ export function loadTests(directoryPath: string): Promise<TestSuiteInfo>
     });
 }
 
-export function runTest(testName: string, directoryPath: string): Promise<string>
+export function runDotnetTest(testName: string, directoryPath: string): Promise<string>
 {
     return executeDotnetTest(testName, directoryPath);
 }
@@ -71,7 +69,6 @@ function executeDotnetTest(testName:string, directoryPath: string): Promise<stri
             }
             else
             {
-                console.log(stdout);
                 resolve("Passed");
             }
         });

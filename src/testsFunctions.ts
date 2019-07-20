@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
-import {loadTests, runTest} from './dotnetWrapper'
+import {loadDotnetTests, runDotnetTest} from './dotnetWrapper'
 
 const rootTestSuite: TestSuiteInfo = {
 	type: 'suite',
@@ -13,7 +13,7 @@ export function loadTests(directory: string): Promise<TestSuiteInfo>
 {
 	return new Promise((resolve, reject) => 
 	{
-		loadTests(directory)
+		loadDotnetTests(directory)
 		.then((testSuite) =>
 		{
 			rootTestSuite.children.push(testSuite);
@@ -86,9 +86,14 @@ async function runNode
 
 		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'running' });
 
-		runTest(node.label, directoryPath);
-
-		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'passed' });
-
+		runDotnetTest(node.label, directoryPath)
+			.then((response) =>
+			{
+				testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'passed' });
+			})
+			.catch((error) =>
+			{
+				testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'failed' });
+			});
 	}
 }
