@@ -1,7 +1,7 @@
 import * as childProcess from 'child_process'
 import { TestSuiteInfo, TestInfo } from 'vscode-test-adapter-api';
 
-export function loadTestsFromDirectory(directoryPath: string): Promise<TestSuiteInfo>
+export function loadTests(directoryPath: string): Promise<TestSuiteInfo>
 {
     return new Promise<TestSuiteInfo>((resolve, reject) =>
     {
@@ -27,28 +27,9 @@ export function loadTestsFromDirectory(directoryPath: string): Promise<TestSuite
     });
 }
 
-export function runTest(testName: string, directoryPath: string)
+export function runTest(testName: string, directoryPath: string): Promise<string>
 {
-    return new Promise<TestSuiteInfo>((resolve, reject) =>
-    {
-        var tests: TestSuiteInfo = { "type": "suite", "id": "test suite", "label": "basic test suite", "children": [] };
-        executeDotnetList(directoryPath)
-            .then((stdout) =>
-            {
-                const nameList: string[] = readTestNames(stdout);
-                
-                nameList.forEach(name => {
-                    const test: TestInfo = {"type": "test", "id": name, "label": name}
-                    tests.children.push(test);
-                });
-
-                resolve(tests);
-            })
-            .catch((error) =>
-            {
-                reject(error);
-            });
-    });
+    return executeDotnetTest(testName, directoryPath);
 }
 
 export function debugTest(testName: string, directoryPath: string)
@@ -71,6 +52,27 @@ function executeDotnetList(directoryPath: string): Promise<string>
             else
             {
                 resolve(stdout);
+            }
+        });
+    });
+}
+
+function executeDotnetTest(testName:string, directoryPath: string): Promise<string>
+{
+    const command = `dotnet test ${directoryPath} --filter Name=${testName}`;
+
+    return new Promise<string>((resolve, reject) =>
+    {
+        childProcess.exec(command, (error: childProcess.ExecException | null, stdout: string, stderr: string) =>
+        {
+            if (error)
+            {
+                reject(error);
+            }
+            else
+            {
+                console.log(stdout);
+                resolve("Passed");
             }
         });
     });

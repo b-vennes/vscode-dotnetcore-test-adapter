@@ -1,59 +1,44 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
-import {loadTestsFromDirectory} from './utilities'
+import {loadTests, runTest} from './dotnetWrapper'
 
-const fakeTestSuite: TestSuiteInfo = {
+const rootTestSuite: TestSuiteInfo = {
 	type: 'suite',
 	id: 'root',
-	label: 'Fake', // the label of the root node should be the name of the testing framework
-	children: [
-		{
-			type: 'suite',
-			id: 'nested',
-			label: 'Nested suite',
-			children: [
-				{
-					type: 'test',
-					id: 'test1',
-					label: 'Test #1'
-				},
-				{
-					type: 'test',
-					id: 'test2',
-					label: 'Test #2'
-				}
-			]
-		},
-		{
-			type: 'test',
-			id: 'test3',
-			label: 'Test #3'
-		},
-		{
-			type: 'test',
-			id: 'test4',
-			label: 'Test #4'
-		}
-	]
+	label: '.Net Core', // the label of the root node should be the name of the testing framework
+	children: []
 };
 
 export function loadTests(directory: string): Promise<TestSuiteInfo>
 {
-	return loadTestsFromDirectory(directory);
+	return new Promise((resolve, reject) => 
+	{
+		loadTests(directory)
+		.then((testSuite) =>
+		{
+			rootTestSuite.children.push(testSuite);
+			resolve(rootTestSuite);
+		})
+		.catch((error) =>
+		{
+			reject(error);
+		});
+	});
 }
 
 export async function runTests
 (
 	tests: string[],
-	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>
+	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>,
+	directoryPath: string
 ): Promise<void>
 {
 	for (const suiteOrTestId of tests)
 	{
-		const node = findNode(fakeTestSuite, suiteOrTestId);
+		const node = findNode(rootTestSuite, suiteOrTestId);
 		if (node)
 		{
-			await runNode(node, testStatesEmitter);
+			await runNode(node, testStatesEmitter, directoryPath);
 		}
 	}
 }
@@ -78,7 +63,8 @@ function findNode(searchNode: TestSuiteInfo | TestInfo, id: string): TestSuiteIn
 async function runNode
 (
 	node: TestSuiteInfo | TestInfo,
-	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>
+	testStatesEmitter: vscode.EventEmitter<TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent>,
+	directoryPath: string
 ): Promise<void>
 {
 
@@ -88,7 +74,7 @@ async function runNode
 		testStatesEmitter.fire(<TestSuiteEvent>{ type: 'suite', suite: node.id, state: 'running' });
 
 		for (const child of node.children) {
-			await runNode(child, testStatesEmitter);
+			await runNode(child, testStatesEmitter, directoryPath);
 		}
 
 		testStatesEmitter.fire(<TestSuiteEvent>{ type: 'suite', suite: node.id, state: 'completed' });
@@ -99,6 +85,8 @@ async function runNode
 	{
 
 		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'running' });
+
+		runTest(node.label, directoryPath);
 
 		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'passed' });
 

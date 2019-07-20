@@ -56,7 +56,7 @@ export class DotnetcoreAdapter implements TestAdapter
 		this.testStatesEmitter.fire(<TestRunStartedEvent>{ type: 'started', tests });
 
 		// in a "real" TestAdapter this would start a test run in a child process
-		await runTests(tests, this.testStatesEmitter);
+		await runTests(tests, this.testStatesEmitter, this.workspace.uri.fsPath);
 
 		this.testStatesEmitter.fire(<TestRunFinishedEvent>{ type: 'finished' });
 

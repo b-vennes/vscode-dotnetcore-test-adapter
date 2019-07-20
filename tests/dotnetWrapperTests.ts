@@ -1,10 +1,11 @@
 import { expect, assert } from 'chai';
 import { describe } from 'mocha';
-import { loadTests } from '../src/testsFunctions'
+import { runTest, loadTests } from '../src/dotnetWrapper';
+
+const mstestPath = '../example_projects/MSTests';
 
 describe('Load Tests', () =>
 {
-    const mstestPath = '../example_projects/MSTests';
     it('should not return an error', () =>{
         loadTests(mstestPath)
             .then((testInfo) => {
@@ -14,7 +15,7 @@ describe('Load Tests', () =>
                 assert(false, 'load tests returned error');
             });
     });
-    
+
     it('should return the correct test names', () => 
     {
         loadTests(mstestPath)
@@ -27,6 +28,22 @@ describe('Load Tests', () =>
             .catch((error) =>
             {
                 assert(false, 'load tests returned error')
+            });
+    });
+});
+
+describe('Run Tests', () =>
+{
+    it('should run working tests without errors', () =>
+    {
+        runTest('TestMethod1', mstestPath)
+            .then((response) =>
+            {
+                expect(response == 'Passed');
+            })
+            .catch((error) =>
+            {
+                assert(false, 'run test returned an error');
             });
     });
 });
