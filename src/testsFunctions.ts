@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
 import {loadDotnetTests, runDotnetTest} from './dotnetWrapper'
+import * as glob from 'glob';
 
 const rootTestSuite: TestSuiteInfo = {
 	type: 'suite',
@@ -9,19 +10,27 @@ const rootTestSuite: TestSuiteInfo = {
 	children: []
 };
 
-export function loadTests(directory: string): Promise<TestSuiteInfo>
+export function loadTests(directory: string, storagePath: string): Promise<TestSuiteInfo>
 {
 	return new Promise((resolve, reject) => 
 	{
-		loadDotnetTests(directory)
-		.then((testSuite) =>
+		const configValue: string | undefined = vscode.workspace.getConfiguration().get('dotnetcoreExplorer.files');
+		var globPattern: string = "**/bin/**/*.dll"
+		if (configValue !== undefined && configValue !== "")
 		{
-			rootTestSuite.children.push(testSuite);
-			resolve(rootTestSuite);
-		})
-		.catch((error) =>
+			globPattern = configValue;
+		}
+
+		glob(`${directory}/${globPattern}`, (err, matches) =>
 		{
-			reject(error);
+			matches.forEach((match) => 
+			{
+				loadDotnetTests(match, storagePath)
+					.then((testFqdns) =>
+					{
+						resolve(rootTestSuite);
+					});
+			});
 		});
 	});
 }

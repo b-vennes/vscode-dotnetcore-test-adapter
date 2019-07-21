@@ -23,7 +23,8 @@ export class DotnetcoreAdapter implements TestAdapter
 	constructor
 	(
 		public readonly workspace: vscode.WorkspaceFolder,
-		private readonly log: Log
+		private readonly log: Log,
+		private storagePath: string | undefined
 	)
 	{
 
@@ -42,7 +43,12 @@ export class DotnetcoreAdapter implements TestAdapter
 
 		this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 
-		const loadedTests = await loadTests(this.workspace.uri.fsPath);
+		var loadedTests;
+
+		if (this.storagePath !== undefined)
+		{
+			loadedTests = await loadTests(this.workspace.uri.fsPath, this.storagePath);
+		}
 
 		this.testsEmitter.fire(<TestLoadFinishedEvent>{ type: 'finished', suite: loadedTests });
 

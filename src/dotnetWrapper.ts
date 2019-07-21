@@ -1,27 +1,28 @@
 import * as childProcess from 'child_process'
-import { TestSuiteInfo, TestInfo } from 'vscode-test-adapter-api';
+import * as path from 'path';
+import * as fs from 'fs';
 
-export function loadDotnetTests(directoryPath: string): Promise<TestSuiteInfo>
+export function loadDotnetTests(dllPath: string, storagePath: string): Promise<string[]>
 {
-    return new Promise<TestSuiteInfo>((resolve, reject) =>
+    return new Promise<string[]>((resolve, reject) =>
     {
-        var tests: TestSuiteInfo = { "type": "suite", "id": "test suite", "label": "basic test suite", "children": [] };
-        executeDotnetList(directoryPath)
-            .then((stdout) =>
+        executeDotnetList(dllPath, storagePath)
+            .then((outPath) =>
             {
-                const nameList: string[] = parseTestNames(stdout);
-                
-                nameList.forEach(name => {
-                    const test: TestInfo = {"type": "test", "id": name, "label": name}
-                    tests.children.push(test);
-                });
+                fs.readFile(outPath, { encoding: "UTF-8" }, (err, data: string | Buffer) =>
+                {
+                    if (err)
+                    {
+                        return;
+                    }
 
-                resolve(tests);
+                    const testFqdns = data
+                        .toString()
+                        .split('\r\n')
+                        .filter((test) => test !== "");
+                    resolve(testFqdns);
+                });
             })
-            .catch((error) =>
-            {
-                reject(error);
-            });
     });
 }
 
@@ -35,22 +36,24 @@ export function debugDotnetTest(testName: string, directoryPath: string)
 
 }
 
-function executeDotnetList(directoryPath: string): Promise<string>
+function executeDotnetList(dllPath: string, storagePath: string): Promise<string>
 {
-    const command = `dotnet test --list-tests ${directoryPath}`;
+    console.log(storagePath);
 
-    return new Promise<string>((resolve, reject) =>
+    return new Promise<string>((resolve, reject) => 
     {
+        const filename: string = path.parse(dllPath).name;
+
+        const outPath = path.join(storagePath, `${filename}.txt`);
+
+        const command = `dotnet vstest ${dllPath} /ListFullyQualifiedTests /ListTestsTargetPath:${outPath}`;
+
         childProcess.exec(command, (error: childProcess.ExecException | null, stdout: string, stderr: string) =>
         {
             if (error)
-            {
-                reject(error);
-            }
+            {reject()}
             else
-            {
-                resolve(stdout);
-            }
+            {resolve(outPath)}
         });
     });
 }
@@ -73,13 +76,4 @@ function executeDotnetTest(testName:string, directoryPath: string): Promise<stri
             }
         });
     });
-}
-
-function parseTestNames(execOutput: string): string[]
-{
-    return execOutput
-        .substring(execOutput.indexOf("    "))
-        .split('\r\n')
-        .map(e => e.trim())
-        .filter((name) => name != "");
 }

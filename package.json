@@ -33,6 +33,10 @@
     "test": "mocha -r ts-node/register src/**/test.ts"
   },
   "dependencies": {
+    "@types/find": "^0.2.1",
+    "@types/glob": "^7.1.1",
+    "@types/tmp": "^0.1.0",
+    "glob": "^7.1.4",
     "save": "^2.4.0",
     "vscode-test-adapter-api": "^1.7.0",
     "vscode-test-adapter-util": "^0.7.0"
@@ -60,7 +64,7 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Example Test Explorer configuration",
+      "title": ".Net Core Test Explorer configuration",
       "properties": {
         "exampleExplorer.logpanel": {
           "description": "write diagnotic logs to an output panel",
@@ -69,6 +73,11 @@
         },
         "exampleExplorer.logfile": {
           "description": "write diagnostic logs to the given file",
+          "type": "string",
+          "scope": "resource"
+        },
+        "dotnetcoreExplorer.files": {
+          "description": "glob pattern to test .dll files",
           "type": "string",
           "scope": "resource"
         }
