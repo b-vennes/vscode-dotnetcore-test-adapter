@@ -1,5 +1,4 @@
 import { expect, assert } from 'chai';
-import { describe } from 'mocha';
 import { runDotnetTest, loadDotnetTests } from '../src/dotnetWrapper';
 
 const mstestPath = '../example_projects/MSTests';
@@ -23,7 +22,18 @@ describe('Load Tests', () =>
             {
                 expect(testInfo.children != null);
                 expect(testInfo.children.length > 0);
-                expect(testInfo.children[0].label == 'TestMethod1');
+                expect
+                (
+                    testInfo.children
+                    .map((test) => test.label)
+                    .includes("PassingMSTest")
+                );
+                expect
+                (
+                    testInfo.children
+                    .map((test) => test.label)
+                    .includes("FailingMSTest")
+                );
             })
             .catch(() =>
             {

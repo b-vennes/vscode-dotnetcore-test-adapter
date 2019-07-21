@@ -9,7 +9,7 @@ export function loadDotnetTests(directoryPath: string): Promise<TestSuiteInfo>
         executeDotnetList(directoryPath)
             .then((stdout) =>
             {
-                const nameList: string[] = readTestNames(stdout);
+                const nameList: string[] = parseTestNames(stdout);
                 
                 nameList.forEach(name => {
                     const test: TestInfo = {"type": "test", "id": name, "label": name}
@@ -30,7 +30,7 @@ export function runDotnetTest(testName: string, directoryPath: string): Promise<
     return executeDotnetTest(testName, directoryPath);
 }
 
-export function debugTest(testName: string, directoryPath: string)
+export function debugDotnetTest(testName: string, directoryPath: string)
 {
 
 }
@@ -75,7 +75,7 @@ function executeDotnetTest(testName:string, directoryPath: string): Promise<stri
     });
 }
 
-function readTestNames(execOutput: string): string[]
+function parseTestNames(execOutput: string): string[]
 {
     return execOutput
         .substring(execOutput.indexOf("    "))
