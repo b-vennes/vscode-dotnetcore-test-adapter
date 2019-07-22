@@ -1,23 +1,46 @@
-import * as chai from 'chai';
 import * as dotnetWrapper from '../src/dotnetWrapper';
+import { expect } from 'chai';
 
-const mstestPath = '../example_projects/MSTests';
+const testFileFolder = '../';
 
-describe('Get tests from .Dll', () =>
+const msTestsDllPath = 'example_projects/MSTests/bin/Debug/netcoreapp2.2/MSTests.dll';
+
+describe('Get tests from MSTest .Dll', () =>
 {
-    it('should not return an error', () =>
+    it('should not return an error', async () =>
     {
-        console.log("started test")
-        dotnetWrapper.getTestsFromDll(mstestPath, '')
-            .then(() => 
+        await dotnetWrapper.getTestsFromDll(msTestsDllPath, testFileFolder);
+    });
+
+    it('should return correct list', async () =>
+    {
+        await dotnetWrapper.getTestsFromDll(msTestsDllPath, testFileFolder)
+            .then((tests) =>
             {
-                console.log("made it to the success part");
-                chai.assert(true);
-            })
-            .catch((errorMessage) => 
+                expect(tests.length).to.equal(2);
+                expect(tests).to.include("MSTests.ExampleMSTests.PassingMSTest", `actual: ${tests}`);
+                expect(tests).to.include("MSTests.ExampleMSTests.FailingMSTest", `actual: ${tests}`);
+            });
+    });
+});
+
+const nunitDllPath = 'example_projects/NunitTests/bin/Debug/netcoreapp2.2/NunitTests.dll';
+
+describe('Get tests from Nunit .Dll', () =>
+{
+    it('should not return an error', async () =>
+    {
+        await dotnetWrapper.getTestsFromDll(nunitDllPath, testFileFolder);
+    });
+
+    it('should return correct list', async () =>
+    {
+        await dotnetWrapper.getTestsFromDll(nunitDllPath, testFileFolder)
+            .then((tests) =>
             {
-                console.log("made it to the error part");
-                chai.assert(false, `get tests failed due to error: ${errorMessage}`);
+                expect(tests.length).to.equal(2);
+                expect(tests).to.include("NunitTests.ExampleNunitTests.PassingNunitTest", `actual: ${tests}`);
+                expect(tests).to.include("NunitTests.ExampleNunitTests.FailingNunitTest", `actual: ${tests}`);
             });
     });
 });

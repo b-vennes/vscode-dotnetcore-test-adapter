@@ -13,19 +13,20 @@ export function getTestsFromDll(dllPath: string, storagePath: string): Promise<s
                 {
                     if (err)
                     {
-                        return;
+                        reject(err);
                     }
 
                     const testFqdns = data
                         .toString()
-                        .split('\r\n')
-                        .filter((test) => test !== "");
+                        .split('\n')
+                        .map((test) => test.replace('\r', ""))
+                        .filter((test) => test !== '')
                     resolve(testFqdns);
                 });
             })
-            .catch((errorMessage) =>
+            .catch((error) =>
             {
-                reject(errorMessage);
+                reject(error);
             });
     });
 }
@@ -54,7 +55,7 @@ function executeListCommand(dllPath: string, storagePath: string): Promise<strin
         {
             if (error)
             {
-                reject(stderr);
+                reject(error);
             }
             else
             {

@@ -1,8 +1,8 @@
 using NUnit.Framework;
 
-namespace Tests
+namespace NunitTests
 {
-    public class Tests
+    public class ExampleNunitTests
     {
         [SetUp]
         public void Setup()
@@ -10,9 +10,15 @@ namespace Tests
         }
 
         [Test]
-        public void Test1()
+        public void PassingNunitTest()
         {
-            Assert.Pass();
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        public void FailingNunitTest()
+        {
+            Assert.Fail();
         }
     }
 }
