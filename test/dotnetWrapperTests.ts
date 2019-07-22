@@ -1,59 +1,23 @@
-import { expect, assert } from 'chai';
-import { runDotnetTest, loadDotnetTests } from '../src/dotnetWrapper';
+import * as chai from 'chai';
+import * as dotnetWrapper from '../src/dotnetWrapper';
 
 const mstestPath = '../example_projects/MSTests';
 
-describe('Load Tests', () =>
+describe('Get tests from .Dll', () =>
 {
-    it('should not return an error', () =>{
-        loadDotnetTests(mstestPath)
-            .then(() => {
-                assert(true);
-            })
-            .catch(() => {
-                assert(false, 'load tests returned error');
-            });
-    });
-
-    it('should return the correct test names', () => 
+    it('should not return an error', () =>
     {
-        loadDotnetTests(mstestPath)
-            .then((testInfo) => 
+        console.log("started test")
+        dotnetWrapper.getTestsFromDll(mstestPath, '')
+            .then(() => 
             {
-                expect(testInfo.children != null);
-                expect(testInfo.children.length > 0);
-                expect
-                (
-                    testInfo.children
-                    .map((test) => test.label)
-                    .includes("PassingMSTest")
-                );
-                expect
-                (
-                    testInfo.children
-                    .map((test) => test.label)
-                    .includes("FailingMSTest")
-                );
+                console.log("made it to the success part");
+                chai.assert(true);
             })
-            .catch(() =>
+            .catch((errorMessage) => 
             {
-                assert(false, 'load tests returned error')
-            });
-    });
-});
-
-describe('Run Tests', () =>
-{
-    it('should run working tests without errors', () =>
-    {
-        runDotnetTest('TestMethod1', mstestPath)
-            .then((response) =>
-            {
-                expect(response == 'Passed');
-            })
-            .catch(() =>
-            {
-                assert(false, 'run test returned an error');
+                console.log("made it to the error part");
+                chai.assert(false, `get tests failed due to error: ${errorMessage}`);
             });
     });
 });

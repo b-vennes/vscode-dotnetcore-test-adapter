@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo, TestInfo, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
-import {loadDotnetTests, runDotnetTest} from './dotnetWrapper'
+import * as dotnetWrapper from './dotnetWrapper'
 import * as glob from 'glob';
 
 const rootTestSuite: TestSuiteInfo = {
@@ -23,12 +23,16 @@ export function loadTests(directory: string, storagePath: string): Promise<TestS
 
 		glob(`${directory}/${globPattern}`, (err, matches) =>
 		{
-			matches.forEach((match) => 
+			matches.forEach((dllMatch) => 
 			{
-				loadDotnetTests(match, storagePath)
+				dotnetWrapper.getTestsFromDll(dllMatch, storagePath)
 					.then((testFqdns) =>
 					{
 						resolve(rootTestSuite);
+					})
+					.catch((error) =>
+					{
+						reject(error);
 					});
 			});
 		});
@@ -95,7 +99,7 @@ async function runNode
 
 		testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'running' });
 
-		runDotnetTest(node.label, directoryPath)
+		dotnetWrapper.runDotnetTest(node.label, directoryPath)
 			.then((response) =>
 			{
 				testStatesEmitter.fire(<TestEvent>{ type: 'test', test: node.id, state: 'passed' });

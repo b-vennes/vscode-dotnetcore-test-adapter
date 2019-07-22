@@ -2,11 +2,11 @@ import * as childProcess from 'child_process'
 import * as path from 'path';
 import * as fs from 'fs';
 
-export function loadDotnetTests(dllPath: string, storagePath: string): Promise<string[]>
+export function getTestsFromDll(dllPath: string, storagePath: string): Promise<string[]>
 {
     return new Promise<string[]>((resolve, reject) =>
     {
-        executeDotnetList(dllPath, storagePath)
+        executeListCommand(dllPath, storagePath)
             .then((outPath) =>
             {
                 fs.readFile(outPath, { encoding: "UTF-8" }, (err, data: string | Buffer) =>
@@ -23,6 +23,10 @@ export function loadDotnetTests(dllPath: string, storagePath: string): Promise<s
                     resolve(testFqdns);
                 });
             })
+            .catch((errorMessage) =>
+            {
+                reject(errorMessage);
+            });
     });
 }
 
@@ -33,13 +37,11 @@ export function runDotnetTest(testName: string, directoryPath: string): Promise<
 
 export function debugDotnetTest(testName: string, directoryPath: string)
 {
-
+    
 }
 
-function executeDotnetList(dllPath: string, storagePath: string): Promise<string>
+function executeListCommand(dllPath: string, storagePath: string): Promise<string>
 {
-    console.log(storagePath);
-
     return new Promise<string>((resolve, reject) => 
     {
         const filename: string = path.parse(dllPath).name;
@@ -51,9 +53,13 @@ function executeDotnetList(dllPath: string, storagePath: string): Promise<string
         childProcess.exec(command, (error: childProcess.ExecException | null, stdout: string, stderr: string) =>
         {
             if (error)
-            {reject()}
+            {
+                reject(stderr);
+            }
             else
-            {resolve(outPath)}
+            {
+                resolve(outPath);
+            }
         });
     });
 }
@@ -68,11 +74,11 @@ function executeDotnetTest(testName:string, directoryPath: string): Promise<stri
         {
             if (error)
             {
-                reject(error);
+                reject(stderr);
             }
             else
             {
-                resolve("Passed");
+                resolve(stdout);
             }
         });
     });
