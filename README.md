@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/bnvennes/VS%20Code%20.Net%20Core%20Test%20Explorer/_apis/build/status/b-vennes.vscode-dotnetcore-test-adapter?branchName=master)](https://dev.azure.com/bnvennes/VS%20Code%20.Net%20Core%20Test%20Explorer/_build/latest?definitionId=1&branchName=master)
+
 # .Net Core Test Adapter for Visual Studio Code
 
 This repository is an adapter for the [Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension.

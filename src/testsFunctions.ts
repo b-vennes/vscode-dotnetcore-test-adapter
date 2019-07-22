@@ -25,7 +25,7 @@ export function loadTests(directory: string, storagePath: string): Promise<TestS
 		{
 			matches.forEach((dllMatch) => 
 			{
-				dotnetWrapper.getTestsFromDll(dllMatch, storagePath)
+				dotnetWrapper.getTestFqdnsFromDll(dllMatch, storagePath)
 					.then((testFqdns) =>
 					{
 						resolve(rootTestSuite);

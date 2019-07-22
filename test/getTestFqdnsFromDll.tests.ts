@@ -3,7 +3,6 @@ import { expect } from 'chai';
 
 const testFileFolder = './test';
 
-
 describe('Get tests from MSTest .Dll', () =>
 {
     const msTestsDllPath = 'example_projects/MSTests/bin/Debug/netcoreapp2.2/MSTests.dll';
@@ -65,4 +64,4 @@ describe('Get tests from Xunit .Dll', () =>
                 expect(tests).to.include("XunitTests.ExampleXunitTests.FailingXunitTest", `actual: ${tests}`);
             });
     });
-})
+});
