@@ -2,3 +2,4 @@ node_modules/
 out/
 example_projects/*/bin
 example_projects/*/obj
+test/*.txt
