@@ -1,20 +1,21 @@
 import * as dotnetWrapper from '../src/dotnetWrapper';
 import { expect } from 'chai';
 
-const testFileFolder = '../';
+const testFileFolder = './test';
 
-const msTestsDllPath = 'example_projects/MSTests/bin/Debug/netcoreapp2.2/MSTests.dll';
 
 describe('Get tests from MSTest .Dll', () =>
 {
-    it('should not return an error', async () =>
+    const msTestsDllPath = 'example_projects/MSTests/bin/Debug/netcoreapp2.2/MSTests.dll';
+
+    it('should not throw an error', async () =>
     {
-        await dotnetWrapper.getTestsFromDll(msTestsDllPath, testFileFolder);
+        await dotnetWrapper.getTestFqdnsFromDll(msTestsDllPath, testFileFolder);
     });
 
-    it('should return correct list', async () =>
+    it('should return correct test FQDNs', async () =>
     {
-        await dotnetWrapper.getTestsFromDll(msTestsDllPath, testFileFolder)
+        await dotnetWrapper.getTestFqdnsFromDll(msTestsDllPath, testFileFolder)
             .then((tests) =>
             {
                 expect(tests.length).to.equal(2);
@@ -28,14 +29,14 @@ const nunitDllPath = 'example_projects/NunitTests/bin/Debug/netcoreapp2.2/NunitT
 
 describe('Get tests from Nunit .Dll', () =>
 {
-    it('should not return an error', async () =>
+    it('should not throw an error', async () =>
     {
-        await dotnetWrapper.getTestsFromDll(nunitDllPath, testFileFolder);
+        await dotnetWrapper.getTestFqdnsFromDll(nunitDllPath, testFileFolder);
     });
 
-    it('should return correct list', async () =>
+    it('should return correct test FQDNs', async () =>
     {
-        await dotnetWrapper.getTestsFromDll(nunitDllPath, testFileFolder)
+        await dotnetWrapper.getTestFqdnsFromDll(nunitDllPath, testFileFolder)
             .then((tests) =>
             {
                 expect(tests.length).to.equal(2);
@@ -44,3 +45,24 @@ describe('Get tests from Nunit .Dll', () =>
             });
     });
 });
+
+describe('Get tests from Xunit .Dll', () =>
+{
+    const xunitDllPath = 'example_projects/XunitTests/bin/Debug/netcoreapp2.2/XunitTests.dll';
+
+    it('should not throw an error', async () =>
+    {
+        await dotnetWrapper.getTestFqdnsFromDll(xunitDllPath, testFileFolder);
+    });
+
+    it('should return correct test FQDNs', async () =>
+    {
+        await dotnetWrapper.getTestFqdnsFromDll(xunitDllPath, testFileFolder)
+            .then((tests) =>
+            {
+                expect(tests.length).to.equal(2);
+                expect(tests).to.include("XunitTests.ExampleXunitTests.PassingXunitTest", `actual: ${tests}`);
+                expect(tests).to.include("XunitTests.ExampleXunitTests.FailingXunitTest", `actual: ${tests}`);
+            });
+    });
+})

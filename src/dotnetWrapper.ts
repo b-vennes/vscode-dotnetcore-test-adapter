@@ -2,7 +2,7 @@ import * as childProcess from 'child_process'
 import * as path from 'path';
 import * as fs from 'fs';
 
-export function getTestsFromDll(dllPath: string, storagePath: string): Promise<string[]>
+export function getTestFqdnsFromDll(dllPath: string, storagePath: string): Promise<string[]>
 {
     return new Promise<string[]>((resolve, reject) =>
     {
