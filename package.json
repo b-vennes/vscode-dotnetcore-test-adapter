@@ -42,15 +42,15 @@
     "vscode-test-adapter-util": "^0.7.0"
   },
   "devDependencies": {
-    "@types/vscode": "~1.23.0",
-    "typescript": "^3.5.3",
-    "vsce": "^1.65.0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
+    "@types/vscode": "^1.36.0",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "ts-node": "^8.3.0",
-    "tslib": "^1.9.3"
+    "tslib": "^1.9.3",
+    "typescript": "^3.5.3",
+    "vsce": "^1.65.0"
   },
   "engines": {
     "vscode": "^1.23.0"
@@ -66,17 +66,17 @@
       "type": "object",
       "title": ".Net Core Test Explorer configuration",
       "properties": {
-        "exampleExplorer.logpanel": {
+        "dotnetTestExplorer.logpanel": {
           "description": "write diagnotic logs to an output panel",
           "type": "boolean",
           "scope": "resource"
         },
-        "exampleExplorer.logfile": {
+        "dotnetTestExplorer.logfile": {
           "description": "write diagnostic logs to the given file",
           "type": "string",
           "scope": "resource"
         },
-        "dotnetcoreExplorer.files": {
+        "dotnetTestExplorer.files": {
           "description": "glob pattern to test .dll files",
           "type": "string",
           "scope": "resource"

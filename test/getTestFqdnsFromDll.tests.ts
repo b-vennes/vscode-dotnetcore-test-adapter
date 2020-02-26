@@ -1,4 +1,4 @@
-import * as dotnetWrapper from '../src/dotnetWrapper';
+import * as dotnetWrapper from '../src/dotnet-adapter';
 import { expect } from 'chai';
 
 const testFileFolder = './test';

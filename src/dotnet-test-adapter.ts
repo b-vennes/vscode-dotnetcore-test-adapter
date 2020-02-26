@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import { TestAdapter, TestLoadStartedEvent, TestLoadFinishedEvent, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
 import { Log } from 'vscode-test-adapter-util';
-import { loadTests, runTests } from './testsFunctions';
+import { TestsManager } from './tests-manager';
 
 /**
  * This class is intended as a starting point for implementing a "real" TestAdapter.
  * The file `README.md` contains further instructions.
  */
-export class DotnetcoreAdapter implements TestAdapter
+export class DotnetTestAdapter implements TestAdapter
 {
 
 	private disposables: { dispose(): void }[] = [];
@@ -24,7 +24,7 @@ export class DotnetcoreAdapter implements TestAdapter
 	(
 		public readonly workspace: vscode.WorkspaceFolder,
 		private readonly log: Log,
-		private storagePath: string | undefined
+		private testsManager: TestsManager
 	)
 	{
 
@@ -43,12 +43,7 @@ export class DotnetcoreAdapter implements TestAdapter
 
 		this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 
-		var loadedTests;
-
-		if (this.storagePath !== undefined)
-		{
-			loadedTests = await loadTests(this.workspace.uri.fsPath, this.storagePath);
-		}
+		const loadedTests = await this.testsManager.LoadTests(this.workspace.uri.fsPath);
 
 		this.testsEmitter.fire(<TestLoadFinishedEvent>{ type: 'finished', suite: loadedTests });
 
@@ -57,26 +52,28 @@ export class DotnetcoreAdapter implements TestAdapter
 	async run(tests: string[]): Promise<void>
 	{
 
-		this.log.info(`Running example tests ${JSON.stringify(tests)}`);
+		throw new Error('Method not implemented');
 
-		this.testStatesEmitter.fire(<TestRunStartedEvent>{ type: 'started', tests });
+		// this.log.info(`Running example tests ${JSON.stringify(tests)}`);
 
-		// in a "real" TestAdapter this would start a test run in a child process
-		await runTests(tests, this.testStatesEmitter, this.workspace.uri.fsPath);
+		// this.testStatesEmitter.fire(<TestRunStartedEvent>{ type: 'started', tests });
 
-		this.testStatesEmitter.fire(<TestRunFinishedEvent>{ type: 'finished' });
+		// // in a "real" TestAdapter this would start a test run in a child process
+		// await runTests(tests, this.testStatesEmitter, this.workspace.uri.fsPath);
+
+		// this.testStatesEmitter.fire(<TestRunFinishedEvent>{ type: 'finished' });
 
 	}
 
 	async debug(tests: string[]): Promise<void> {
 		// start a test run in a child process and attach the debugger to it...
-		throw new Error("Method not implemented.");
+		throw new Error('Method not implemented.');
 	}
 
 	cancel(): void
 	{
 		// in a "real" TestAdapter this would kill the child process for the current test run (if there is any)
-		throw new Error("Method not implemented.");
+		throw new Error('Method not implemented.');
 	}
 
 	dispose(): void
