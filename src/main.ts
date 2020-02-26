@@ -3,20 +3,22 @@ import { TestHub, testExplorerExtensionId } from 'vscode-test-adapter-api';
 import { Log, TestAdapterRegistrar } from 'vscode-test-adapter-util';
 import { DotnetTestAdapter } from './dotnet-test-adapter';
 import { mkdirSync, existsSync } from 'fs';
-import { TestsManager } from './tests-manager';
-import { TestsRetriever } from './dotnet-adapter';
+import { TestManager } from './test-manager';
+import { TestRetriever } from './test-retriever';
 
 export async function activate(context: vscode.ExtensionContext) {
 
+	const storagePath = context.globalStoragePath;
+
 	const workspaceFolder = (vscode.workspace.workspaceFolders || [])[0];
 
-	if (context.storagePath !== undefined && !existsSync(context.storagePath))
+	if (storagePath && !existsSync(storagePath))
 	{
-		mkdirSync(context.storagePath);
+		mkdirSync(storagePath);
 	}
 
 	// create a simple logger that can be configured with the configuration variables
-	// `dotnetTestExplorer.logpanel` and `exampleExplorer.logfile`
+	// `dotnetTestExplorer.logpanel` and `dotnetTestExplorer.logfile`
 	const log = new Log('dotnetTestExplorer', workspaceFolder, '.NET Test Explorer Log');
 	context.subscriptions.push(log);
 
@@ -24,26 +26,26 @@ export async function activate(context: vscode.ExtensionContext) {
 	const testExplorerExtension = vscode.extensions.getExtension<TestHub>(testExplorerExtensionId);
 	if (log.enabled) log.info(`Test Explorer ${testExplorerExtension ? '' : 'not '}found`);
 
-	if (!context.storagePath)
+	if (!storagePath)
 	{
-		log.error('Extension storage not accessible.')
+		log.error('Extension storage undefined.')
 		return;
 	}
-	
-	const extensionStoragePath: string = context.storagePath;
 
-	if (testExplorerExtension) {
-
-		const testHub = testExplorerExtension.exports;
-
-		const testsRetriever = new TestsRetriever(extensionStoragePath, log);
-		const testsManager = new TestsManager(log, testsRetriever);
-
-		// this will register an DotnetcoreAdapter for each WorkspaceFolder
-		context.subscriptions.push(new TestAdapterRegistrar(
-			testHub,
-			workspaceFolder => new DotnetTestAdapter(workspaceFolder, log, testsManager),
-			log
-		));
+	if (!testExplorerExtension) {
+		return;
 	}
+
+	const testHub = testExplorerExtension.exports;
+
+	// instantiate dependencies
+	const testsRetriever = new TestRetriever(log);
+	const testsManager = new TestManager(log, testsRetriever);
+
+	// this will register an DotnetcoreAdapter for each WorkspaceFolder
+	context.subscriptions.push(new TestAdapterRegistrar(
+		testHub,
+		workspaceFolder => new DotnetTestAdapter(workspaceFolder, log, testsManager),
+		log
+	));
 }

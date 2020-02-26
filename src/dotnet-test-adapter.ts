@@ -1,12 +1,8 @@
 import * as vscode from 'vscode';
 import { TestAdapter, TestLoadStartedEvent, TestLoadFinishedEvent, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
 import { Log } from 'vscode-test-adapter-util';
-import { TestsManager } from './tests-manager';
+import { TestManager } from './test-manager';
 
-/**
- * This class is intended as a starting point for implementing a "real" TestAdapter.
- * The file `README.md` contains further instructions.
- */
 export class DotnetTestAdapter implements TestAdapter
 {
 
@@ -24,7 +20,7 @@ export class DotnetTestAdapter implements TestAdapter
 	(
 		public readonly workspace: vscode.WorkspaceFolder,
 		private readonly log: Log,
-		private testsManager: TestsManager
+		private testManager: TestManager
 	)
 	{
 
@@ -43,7 +39,7 @@ export class DotnetTestAdapter implements TestAdapter
 
 		this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 
-		const loadedTests = await this.testsManager.LoadTests(this.workspace.uri.fsPath);
+		const loadedTests = await this.testManager.LoadTests(this.workspace.uri.fsPath);
 
 		this.testsEmitter.fire(<TestLoadFinishedEvent>{ type: 'finished', suite: loadedTests });
 
