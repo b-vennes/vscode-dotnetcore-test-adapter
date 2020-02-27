@@ -1,8 +1,7 @@
 export class Test {
-
-    public readonly fullyQualifiedDomainName: string;
+    public fqdnPath: Array<string>;
 
     constructor(fullyQualifiedDomainName: string) {
-        this.fullyQualifiedDomainName = fullyQualifiedDomainName; 
+        this.fqdnPath = fullyQualifiedDomainName.split('.');
     }
 }

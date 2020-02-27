@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TestAdapter, TestLoadStartedEvent, TestLoadFinishedEvent, TestRunStartedEvent, TestRunFinishedEvent, TestSuiteEvent, TestEvent } from 'vscode-test-adapter-api';
-import { Log } from 'vscode-test-adapter-util';
 import { TestManager } from './test-manager';
+import { ILogger } from './logger-interface';
 
 export class DotnetTestAdapter implements TestAdapter
 {
@@ -19,12 +19,10 @@ export class DotnetTestAdapter implements TestAdapter
 	constructor
 	(
 		public readonly workspace: vscode.WorkspaceFolder,
-		private readonly log: Log,
+		private readonly logger: ILogger,
 		private testManager: TestManager
-	)
-	{
-
-		this.log.info('Initializing example adapter');
+	) {
+		this.logger.LogInformation('Initializing example adapter');
 
 		this.disposables.push(this.testsEmitter);
 		this.disposables.push(this.testStatesEmitter);
@@ -35,7 +33,7 @@ export class DotnetTestAdapter implements TestAdapter
 	async load(): Promise<void>
 	{
 
-		this.log.info('Loading example tests');
+		this.logger.LogInformation('Loading example tests');
 
 		this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 

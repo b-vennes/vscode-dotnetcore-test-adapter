@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
 import { TestSuiteInfo} from 'vscode-test-adapter-api';
 import { TestRetriever } from './test-retriever';
-import { Log } from 'vscode-test-adapter-util';
 import * as glob from 'glob';
 import { join } from 'path';
+import { TestSuiteBuilder } from './test-suite-builder';
+import { ILogger } from './logger-interface';
 
 export class TestManager
 {
-	constructor(private log: Log, private retriever: TestRetriever) {}
+	constructor(private readonly logger: ILogger, private readonly retriever: TestRetriever) {}
 
 	public LoadTests(directory: string): TestSuiteInfo {
 		const projectSearchText = vscode.workspace.getConfiguration().get<string>('dotnetTestExplorer.files') || '**/*.csproj';
@@ -17,14 +18,13 @@ export class TestManager
 		const foundTests = projectsList.map(p => this.retriever.GetTestsFromProject(p)).flat();
 
 		for (const test of foundTests) {
-			if (this.log.enabled) this.log.info(test.fullyQualifiedDomainName);
+			this.logger.LogInformation(`Found test: ${test.fqdnPath.join('.')}`);
 		}
 
-		return {
-			type: 'suite',
-			id: 'root',
-			label: '.NET Tests',
-			children: []
-		};
+		const testSuiteBuilder = new TestSuiteBuilder();
+
+		foundTests.forEach(t => testSuiteBuilder.AddTest(t));
+
+		return testSuiteBuilder.GetTestSuite();
 	}
 }

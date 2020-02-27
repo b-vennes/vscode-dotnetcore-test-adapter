@@ -5,6 +5,8 @@ import { DotnetTestAdapter } from './dotnet-test-adapter';
 import { mkdirSync, existsSync } from 'fs';
 import { TestManager } from './test-manager';
 import { TestRetriever } from './test-retriever';
+import { Logger } from './logger';
+import { ILogger } from './logger-interface';
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -39,8 +41,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	const testHub = testExplorerExtension.exports;
 
 	// instantiate dependencies
-	const testsRetriever = new TestRetriever(log);
-	const testsManager = new TestManager(log, testsRetriever);
+	const logger: ILogger = new Logger(log);
+	const testsRetriever = new TestRetriever(logger);
+	const testsManager = new TestManager(logger, testsRetriever);
 
 	// this will register an DotnetcoreAdapter for each WorkspaceFolder
 	context.subscriptions.push(new TestAdapterRegistrar(
